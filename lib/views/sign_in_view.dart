@@ -154,4 +154,11 @@ class _SignInFormState extends State<SignInForm> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
+  }
 }
