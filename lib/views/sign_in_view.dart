@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 
+import 'home_view.dart';
+
 class SignInView extends StatelessWidget {
   const SignInView({super.key});
 
@@ -99,6 +101,7 @@ class _SignInFormState extends State<SignInForm> {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         _showSnackBar('Signed In');
+        _navigateToHomeView();
       } catch (e) {
         _showSnackBar('Incorrect Email or Password', isError: true);
       } finally {
@@ -107,6 +110,11 @@ class _SignInFormState extends State<SignInForm> {
         });
       }
     }
+  }
+  
+  void _navigateToHomeView() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const HomeView()));
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
