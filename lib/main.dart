@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-Future<void> main() async {
+void main() {
   runApp(const HomeView());
 }
 
@@ -27,11 +27,15 @@ class HomeView extends StatelessWidget {
           children: [
             TextButton(
                 onPressed: () async {
-                  print('pressed');
-                  WidgetsFlutterBinding.ensureInitialized();
                   await Firebase.initializeApp(
                     options: DefaultFirebaseOptions.currentPlatform,
                   );
+                  var instance = FirebaseAuth.instance;
+                  var creds = instance.createUserWithEmailAndPassword(
+                      email: "bob@gmail.com",
+                      password: "hellof"
+                  );
+                  print(creds);
                 },
                 child: const Text('Press Me'))
           ],
