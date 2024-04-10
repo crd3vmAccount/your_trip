@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "623752558613",
+    "project_id": "your-trip-1ebea",
+    "storage_bucket": "your-trip-1ebea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623752558613:android:385ea64584bd17fb9c761c",
+        "android_client_info": {
+          "package_name": "cs.virginia.edu.your_trip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623752558613-17fo6kov47gamnhfk0a4e9a3gaj4op57.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN441TB9b_oyTl532Ep_wMpw5Toay1ksE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623752558613-17fo6kov47gamnhfk0a4e9a3gaj4op57.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "623752558613-vigank4jsvtr58ncfgl47906mitl81ck.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "cs.virginia.edu.yourTrip"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
