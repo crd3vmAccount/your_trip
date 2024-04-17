@@ -20,6 +20,10 @@ class _AlbumDetailState extends State<AlbumDetailView> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: buildGalleryGrid(context),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {  },
+        child: const Icon(Icons.camera_alt),
+      ),
     );
   }
 
