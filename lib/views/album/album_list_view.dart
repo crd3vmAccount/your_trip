@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:your_trip/views/album/album_card_widget.dart';
+import 'package:your_trip/views/album/album_card.dart';
+import 'package:your_trip/views/album/album_create_dialog.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -17,8 +18,8 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Albums"),
-        actions: [
-           IconButton(onPressed: () {}, icon: const Icon(Icons.add))
+        actions: const [
+          AlbumCreateDialog(),
         ],
       ),
       body: Padding(
@@ -27,8 +28,7 @@ class HomeView extends StatelessWidget {
             itemCount: cardList.length,
             itemBuilder: (context, index) {
               return cardList[index];
-            }
-        ),
+            }),
       ),
     );
   }
