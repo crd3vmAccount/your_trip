@@ -45,23 +45,17 @@ class AlbumCard extends StatelessWidget {
       void Function() onShareClick,) {
     return Column(
       children: [
-        IconButton(
-          icon: const Icon(Icons.map_outlined),
-          onPressed: () {
-            // Add your button functionality here
-          },
+        ElevatedButton(
+          child: const Icon(Icons.map_outlined),
+          onPressed: () {},
         ),
-        IconButton(
-          icon: const Icon(Icons.auto_awesome_mosaic_rounded),
-          onPressed: () {
-            // Add your button functionality here
-          },
+        ElevatedButton(
+          child: const Icon(Icons.auto_awesome_mosaic_rounded),
+          onPressed: () {},
         ),
         IconButton(
           icon: const Icon(Icons.share),
-          onPressed: () {
-            // Add your button functionality here
-          },
+          onPressed: () {},
         ),
       ],
     );
