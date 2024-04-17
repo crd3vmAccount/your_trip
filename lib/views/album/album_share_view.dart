@@ -4,10 +4,10 @@ class AlbumShareView extends StatefulWidget {
   const AlbumShareView({super.key});
 
   @override
-  State createState() => _AlbumShareViewState();
+  State createState() => _AlbumShareState();
 }
 
-class _AlbumShareViewState extends State<AlbumShareView> {
+class _AlbumShareState extends State<AlbumShareView> {
   final TextEditingController _emailController = TextEditingController();
   final List<String> _previousEmails = [];
 

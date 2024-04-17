@@ -6,11 +6,11 @@ class AlbumCreateDialog extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _AlbumCreateDialogState();
+    return _AlbumCreateState();
   }
 }
 
-class _AlbumCreateDialogState extends State<AlbumCreateDialog> {
+class _AlbumCreateState extends State<AlbumCreateDialog> {
   final TextEditingController _textFieldController = TextEditingController();
 
   void _showAlbumCreateDialog() {

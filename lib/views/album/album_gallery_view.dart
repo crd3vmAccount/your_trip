@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class AlbumDetailView extends StatefulWidget {
-  const AlbumDetailView({super.key});
+class AlbumGalleryView extends StatefulWidget {
+  const AlbumGalleryView({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _AlbumDetailState();
+    return _AlbumGalleryState();
   }
 }
 
-class _AlbumDetailState extends State<AlbumDetailView> {
+class _AlbumGalleryState extends State<AlbumGalleryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
