@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:your_trip/views/album/album_share_view.dart';
 
 class AlbumCard extends StatelessWidget {
   const AlbumCard({super.key});
@@ -31,13 +32,19 @@ class AlbumCard extends StatelessWidget {
             ),
           ),
           _buttonColumn(
-              () => {},
-              () => {},
-              () => {},
+              () {},
+              () {},
+              () {
+                pushRoute(context, const AlbumShareView());
+              },
           ),
         ],
       ),
     );
+  }
+
+  void pushRoute(BuildContext context, Widget widget) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
   }
 
   Widget _buttonColumn(void Function() onMapClick,
@@ -46,16 +53,16 @@ class AlbumCard extends StatelessWidget {
     return Column(
       children: [
         ElevatedButton(
+          onPressed: onMapClick,
           child: const Icon(Icons.map_outlined),
-          onPressed: () {},
         ),
         ElevatedButton(
+          onPressed: onGalleryClick,
           child: const Icon(Icons.auto_awesome_mosaic_rounded),
-          onPressed: () {},
         ),
         IconButton(
           icon: const Icon(Icons.share),
-          onPressed: () {},
+          onPressed: onShareClick,
         ),
       ],
     );
