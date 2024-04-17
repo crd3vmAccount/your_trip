@@ -17,6 +17,9 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Albums"),
+        actions: [
+           IconButton(onPressed: () {}, icon: const Icon(Icons.add))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
@@ -26,7 +29,7 @@ class HomeView extends StatelessWidget {
               return cardList[index];
             }
         ),
-      )
+      ),
     );
   }
 }
