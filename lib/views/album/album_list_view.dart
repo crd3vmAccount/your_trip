@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:your_trip/views/album/album_card.dart';
 import 'package:your_trip/views/album/album_create_dialog.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+class AlbumListView extends StatelessWidget {
+  const AlbumListView({super.key});
 
   @override
   Widget build(BuildContext context) {

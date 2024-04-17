@@ -111,7 +111,7 @@ class _SignInFormState extends State<SignInForm> {
   
   void _navigateToHomeView() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomeView()));
+        context, MaterialPageRoute(builder: (context) => const AlbumListView()));
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
