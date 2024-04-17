@@ -41,6 +41,10 @@ dependencies:
   permission_handler: ^11.3.1
   image_picker: ^1.0.7
 
+  flutter_map: ^6.1.0               # Map widgets
+  flutter_map_location_marker: any  # Current location display
+  geolocator: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

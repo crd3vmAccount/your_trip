@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:your_trip/views/album/album_gallery_view.dart';
+import 'package:your_trip/views/album/album_map_view.dart';
 import 'package:your_trip/views/album/album_share_view.dart';
 
 class AlbumCard extends StatelessWidget {
@@ -33,7 +34,9 @@ class AlbumCard extends StatelessWidget {
             ),
           ),
           _buttonColumn(
-              () {},
+              () {
+                pushRoute(context, const AlbumMapView());
+              },
               () {
                 pushRoute(context, const AlbumGalleryView());
               },
