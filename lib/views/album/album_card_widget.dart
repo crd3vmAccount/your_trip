@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class GalleryCard extends StatelessWidget {
-  const GalleryCard({super.key});
+class AlbumCard extends StatelessWidget {
+  const AlbumCard({super.key});
 
   @override
   Widget build(BuildContext context) {

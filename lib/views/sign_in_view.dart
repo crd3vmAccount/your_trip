@@ -1,11 +1,8 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 
-import 'home_view.dart';
+import 'album/album_list_view.dart';
 
 class SignInView extends StatelessWidget {
   const SignInView({super.key});
