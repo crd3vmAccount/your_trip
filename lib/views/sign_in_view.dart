@@ -12,7 +12,7 @@ class SignInView extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Sign In"),
+        title: const Text("Sign In",),
       ),
       body: Column(
         children: [signInCard()],
@@ -22,7 +22,10 @@ class SignInView extends StatelessWidget {
 
   Widget signInCard() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 40,
+        vertical: 20,
+      ),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -57,12 +60,18 @@ class _SignInFormState extends State<SignInForm> {
     return _isLoading
         ? Center(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 16,
+              ),
               child: const CircularProgressIndicator(),
             ),
           )
         : Container(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+              vertical: 16,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -96,7 +105,9 @@ class _SignInFormState extends State<SignInForm> {
           _isLoading = true;
         });
         await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _emailController.text, password: _passwordController.text);
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
         _showSnackBar('Signed In');
         _navigateToHomeView();
       } catch (e) {
@@ -108,10 +119,14 @@ class _SignInFormState extends State<SignInForm> {
       }
     }
   }
-  
+
   void _navigateToHomeView() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const AlbumListView()));
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AlbumListView(),
+      ),
+    );
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
