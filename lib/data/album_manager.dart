@@ -103,6 +103,16 @@ class AlbumManager {
     return matches.docs.isEmpty;
   }
 
+  Stream<List<Future<Uint8List?>>> livePhotos(Album album) {
+    return _getUserAlbumCollection()
+        .doc(album.docId)
+        .snapshots()
+        .map((snapshot) => _retrieveStringList(snapshot.data()?["photos"]))
+        .map((urls) => urls
+            .map((e) => FirebaseStorage.instance.ref(e).getData())
+            .toList());
+  }
+
   Future<void> uploadImage(Album album, XFile image) async {
     var folder = "users/${_user.uid}";
     var file = const Uuid().v8();

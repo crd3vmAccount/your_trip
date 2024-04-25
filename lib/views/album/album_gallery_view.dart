@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -38,28 +39,60 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
   Future<void> takePicture() async {
     final ImagePicker imagePicker = ImagePicker();
     var image = await imagePicker.pickImage(source: ImageSource.camera);
-    if (image != null) AlbumManager.instance.uploadImage(widget._album, image);
+    if (image != null) await AlbumManager.instance.uploadImage(widget._album, image);
   }
 
   Widget buildGalleryGrid(BuildContext context) {
-    return GridView.builder(
-      itemCount: 10,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-      ),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-            onTap: () {
-              // Handle image tap
+    return StreamBuilder(
+      stream: AlbumManager.instance.livePhotos(widget._album),
+      builder: (streamContext, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error!: ${snapshot.error}");
+        } else {
+          var images = snapshot.data!;
+          return GridView.builder(
+            itemCount: images.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5.0,
+              mainAxisSpacing: 5.0,
+            ),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                  onTap: () {
+                    // Handle image tap
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 100,
+                    color: Colors.black38,
+                    child: _imageFromBytes(images[index]),
+                  ));
             },
-            child: Container(
-              width: double.infinity,
-              height: 100,
-              color: Colors.grey,
-            ));
+          );
+        }
       },
     );
+  }
+
+  Widget _imageFromBytes(Future<Uint8List?> bytes) {
+    return FutureBuilder(
+        future: bytes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return snapshot.data == null
+                ? const Text("Image Failed to Load")
+                : Image.memory(
+                    snapshot.data!,
+                    fit: BoxFit.fill,
+                  );
+          }
+        });
   }
 }
