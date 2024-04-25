@@ -4,7 +4,9 @@ import 'package:your_trip/views/album/album_map_view.dart';
 import 'package:your_trip/views/album/album_share_view.dart';
 
 class AlbumCard extends StatelessWidget {
-  const AlbumCard({super.key});
+  final String title;
+
+  const AlbumCard({required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +17,11 @@ class AlbumCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                   child: Text(
-                    'Title',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -34,15 +36,15 @@ class AlbumCard extends StatelessWidget {
             ),
           ),
           _buttonColumn(
-              () {
-                pushRoute(context, const AlbumMapView());
-              },
-              () {
-                pushRoute(context, const AlbumGalleryView());
-              },
-              () {
-                pushRoute(context, const AlbumShareView());
-              },
+            () {
+              pushRoute(context, const AlbumMapView());
+            },
+            () {
+              pushRoute(context, const AlbumGalleryView());
+            },
+            () {
+              pushRoute(context, const AlbumShareView());
+            },
           ),
         ],
       ),
@@ -53,9 +55,11 @@ class AlbumCard extends StatelessWidget {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
   }
 
-  Widget _buttonColumn(void Function() onMapClick,
-      void Function() onGalleryClick,
-      void Function() onShareClick,) {
+  Widget _buttonColumn(
+    void Function() onMapClick,
+    void Function() onGalleryClick,
+    void Function() onShareClick,
+  ) {
     return Column(
       children: [
         ElevatedButton(
