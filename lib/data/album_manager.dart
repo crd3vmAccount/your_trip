@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -58,6 +59,24 @@ class AlbumManager {
         .map((snapshot) => snapshot.docs.map((d) => _queryToAlbum(d)).toList());
   }
 
+  Future<Uint8List?> staticRandomPhoto(Album album) async {
+    var photo = album.photos[Random().nextInt(album.photos.length)];
+    print(photo);
+    return await FirebaseStorage.instance.ref(photo).getData();
+  }
+
+  Future<List<Uint8List>> staticPhotoList(Album album) async {
+    List<Uint8List> futures = [];
+    for (String url in album.photos) {
+      var reference = FirebaseStorage.instance.ref(url);
+      var data = await reference.getData();
+      if (data != null) {
+        futures.add(data);
+      }
+    }
+    return futures;
+  }
+
   Future<bool> create(String albumName) async {
     if (await isNotDuplicate(albumName)) {
       await _getUserAlbumCollection().doc(albumName).set({
@@ -85,12 +104,16 @@ class AlbumManager {
   }
 
   Future<void> uploadImage(Album album, XFile image) async {
-    var photoUrl = "users/${_user.uid}/${const Uuid().v8()}";
+    var folder = "users/${_user.uid}";
+    var file = const Uuid().v8();
     var bytes = await image.readAsBytes();
-    _getUserAlbumCollection().doc(album.docId).update({
-      "photos": FieldValue.arrayUnion([photoUrl])
-    });
-    FirebaseStorage.instance.ref(photoUrl).putData(bytes);
+    var reference = FirebaseStorage.instance.ref(folder).child(file);
+    var uploadTask = reference.putData(bytes);
+    await uploadTask.whenComplete(() async => {
+          await _getUserAlbumCollection().doc(album.docId).update({
+            "photos": FieldValue.arrayUnion(["$folder/$file"])
+          })
+        });
   }
 
   Album _queryToAlbum(QueryDocumentSnapshot<Map<String, dynamic>> data) {
