@@ -27,7 +27,7 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: buildGalleryGrid(context),
+        child: _buildGallery(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: takePicture,
@@ -42,7 +42,7 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
     if (image != null) await AlbumManager.instance.uploadImage(widget._album, image);
   }
 
-  Widget buildGalleryGrid(BuildContext context) {
+  Widget _buildGallery() {
     return StreamBuilder(
       stream: AlbumManager.instance.livePhotos(widget._album),
       builder: (streamContext, snapshot) {
@@ -51,28 +51,32 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
         } else if (snapshot.hasError) {
           return Text("Error!: ${snapshot.error}");
         } else {
-          var images = snapshot.data!;
-          return GridView.builder(
-            itemCount: images.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 5.0,
-              mainAxisSpacing: 5.0,
-            ),
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                  onTap: () {
-                    // Handle image tap
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 100,
-                    color: Colors.black38,
-                    child: _imageFromBytes(images[index]),
-                  ));
-            },
-          );
+          return _buildPhotoGrid(snapshot);
         }
+      },
+    );
+  }
+
+  GridView _buildPhotoGrid(AsyncSnapshot<List<Future<Uint8List?>>> snapshot) {
+    var images = snapshot.data!;
+    return GridView.builder(
+      itemCount: images.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 5.0,
+        mainAxisSpacing: 5.0,
+      ),
+      itemBuilder: (context, index) {
+        return GestureDetector(
+            onTap: () {
+              // Handle image tap
+            },
+            child: Container(
+              width: double.infinity,
+              height: 100,
+              color: Colors.black38,
+              child: _imageFromBytes(images[index]),
+            ));
       },
     );
   }
