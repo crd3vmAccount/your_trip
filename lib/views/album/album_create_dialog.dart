@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AlbumCreateDialog extends StatefulWidget {
@@ -12,34 +11,55 @@ class AlbumCreateDialog extends StatefulWidget {
 
 class _AlbumCreateState extends State<AlbumCreateDialog> {
   final TextEditingController _textFieldController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _showAlbumCreateDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Create New Item'),
-          content: TextField(
-            controller: _textFieldController,
-            decoration: const InputDecoration(hintText: "Enter item name"),
+      builder: (context) {
+        return Form(
+          key: _formKey,
+          child: AlertDialog(
+            title: const Text("Create New Item"),
+            content: _albumNameField(),
+            actions: [
+              ElevatedButton(
+                onPressed: _closeForm,
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text("Submit"),
+              ),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Create'),
-              onPressed: () {
-                String newItemName = _textFieldController.text;
-                print('New Item: $newItemName');
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
         );
+      },
+    );
+  }
+
+  void _closeForm() {
+    Navigator.of(context).pop();
+    _textFieldController.clear();
+  }
+
+  void _submitForm() {
+    var formState = _formKey.currentState;
+    if (formState?.validate() ?? false) {
+      Navigator.of(context).pop();
+      _textFieldController.clear();
+    }
+  }
+
+  Widget _albumNameField() {
+    return TextFormField(
+      controller: _textFieldController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Album name must not be blank";
+        } else {
+          return null;
+        }
       },
     );
   }
