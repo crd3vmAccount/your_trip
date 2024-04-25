@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:your_trip/data/album_manager.dart';
 
 class AlbumCreateDialog extends StatefulWidget {
   const AlbumCreateDialog({super.key});
@@ -12,6 +13,7 @@ class AlbumCreateDialog extends StatefulWidget {
 class _AlbumCreateState extends State<AlbumCreateDialog> {
   final TextEditingController _textFieldController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isDuplicate = false;
 
   void _showAlbumCreateDialog() {
     showDialog(
@@ -39,15 +41,23 @@ class _AlbumCreateState extends State<AlbumCreateDialog> {
   }
 
   void _closeForm() {
-    Navigator.of(context).pop();
+    _isDuplicate = false;
     _textFieldController.clear();
+    Navigator.of(context).pop();
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     var formState = _formKey.currentState;
     if (formState?.validate() ?? false) {
-      Navigator.of(context).pop();
-      _textFieldController.clear();
+      var albumName = _textFieldController.value.text;
+      if (await AlbumManager.instance.create(albumName)) {
+        _closeForm();
+      } else {
+        setState(() {
+          _isDuplicate = true;
+          formState?.validate();
+        });
+      }
     }
   }
 
@@ -57,10 +67,18 @@ class _AlbumCreateState extends State<AlbumCreateDialog> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return "Album name must not be blank";
+        } else if (_isDuplicate) {
+          return "Album name already exists";
         } else {
           return null;
         }
       },
+      onChanged: (value) {
+        setState(() {
+          _isDuplicate = false;
+        });
+      },
+      decoration: const InputDecoration(labelText: "Album Name"),
     );
   }
 
