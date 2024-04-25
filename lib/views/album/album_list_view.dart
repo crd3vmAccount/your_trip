@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:your_trip/views/album/album_card.dart';
-import 'package:your_trip/views/album/album_create_dialog.dart';
+import 'package:your_trip/fragments/album_card.dart';
+import 'package:your_trip/fragments/album_create_dialog.dart';
 
 class AlbumListView extends StatelessWidget {
   const AlbumListView({super.key});
