@@ -18,24 +18,25 @@ class AlbumListView extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-        child: FutureBuilder(
-          future: AlbumManager.instance.staticList(),
-          builder: (futureContext, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            } else if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (listContext, index) {
-                    Album album = snapshot.data![index];
-                    return AlbumCard(album: album);
-                  });
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+          child: StreamBuilder(
+            stream: AlbumManager.instance.liveList(),
+            builder: (streamContext, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else if (snapshot.hasData) {
+                var data = snapshot.data!;
+                return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (listContext, index) {
+                      return AlbumCard(album: data[index]);
+                    }
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
       ),
     );
   }

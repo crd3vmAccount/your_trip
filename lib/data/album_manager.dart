@@ -52,11 +52,10 @@ class AlbumManager {
         .toList();
   }
 
-  Stream<Album> liveList() {
+  Stream<List<Album>> liveList() {
     return _getUserAlbumCollection()
         .snapshots()
-        .expand((snapshot) => snapshot.docs)
-        .map((albumData) => _queryToAlbum(albumData));
+        .map((snapshot) => snapshot.docs.map((d) => _queryToAlbum(d)).toList());
   }
 
   Future<bool> create(String albumName) async {
