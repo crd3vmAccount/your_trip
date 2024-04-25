@@ -3,10 +3,12 @@ import 'package:your_trip/views/album/album_gallery_view.dart';
 import 'package:your_trip/views/album/album_map_view.dart';
 import 'package:your_trip/views/album/album_share_view.dart';
 
-class AlbumCard extends StatelessWidget {
-  final String title;
+import '../data/album.dart';
 
-  const AlbumCard({required this.title, super.key});
+class AlbumCard extends StatelessWidget {
+  final Album _album;
+
+  const AlbumCard({required Album album, super.key}) : _album = album;
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +22,13 @@ class AlbumCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                   child: Text(
-                    title,
+                    _album.displayName,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 3, 0, 0),
-                  child: Container(
-                    height: 100,
-                    width: double.infinity,
-                    color: Colors.grey, // Placeholder for image
-                  ),
-                ),
+                    padding: const EdgeInsets.fromLTRB(5, 3, 0, 0),
+                    child: _albumPreview()),
               ],
             ),
           ),
@@ -48,6 +45,27 @@ class AlbumCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _albumPreview() {
+    return Container(
+      height: 100,
+      width: double.infinity,
+      color: Colors.grey, // Placeholder for image
+      child: _album.photos.isEmpty
+          ? const Center(
+              child: Text(
+                "No Images",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              ),
+            )
+          : const Center(
+              child: Text(
+                "Has Images",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              ),
+            ),
     );
   }
 

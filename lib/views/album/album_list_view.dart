@@ -29,7 +29,7 @@ class AlbumListView extends StatelessWidget {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (listContext, index) {
                     Album album = snapshot.data![index];
-                    return AlbumCard(title: album.displayName);
+                    return AlbumCard(album: album);
                   });
             } else {
               return const CircularProgressIndicator();
