@@ -26,6 +26,16 @@ class AlbumManager {
     return _instance;
   }
 
+  Future<Album> staticGet(String albumName) async {
+    return (await _getUserAlbumCollection()
+            .where("queryName", isEqualTo: albumName.toLowerCase())
+            .limit(1)
+            .get())
+        .docs
+        .map((d) => _queryToAlbum(d))
+        .single;
+  }
+
   Stream<Album> liveGet(String albumName) {
     return _getUserAlbumCollection()
         .where("queryName", isEqualTo: albumName.toLowerCase())
@@ -33,6 +43,13 @@ class AlbumManager {
         .snapshots()
         .expand((snapshot) => snapshot.docs)
         .map((albumData) => _queryToAlbum(albumData));
+  }
+
+  Future<List<Album>> staticList() async {
+    return (await _getUserAlbumCollection().get())
+        .docs
+        .map((d) => _queryToAlbum(d))
+        .toList();
   }
 
   Stream<Album> liveList() {
