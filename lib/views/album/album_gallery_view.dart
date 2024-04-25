@@ -38,7 +38,7 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
   Future<void> takePicture() async {
     final ImagePicker imagePicker = ImagePicker();
     var image = await imagePicker.pickImage(source: ImageSource.camera);
-    AlbumManager.instance.uploadImage(widget._album, image!);
+    if (image != null) AlbumManager.instance.uploadImage(widget._album, image);
   }
 
   Widget buildGalleryGrid(BuildContext context) {
