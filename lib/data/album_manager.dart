@@ -9,14 +9,14 @@ import 'package:uuid/uuid.dart';
 import 'album.dart';
 
 class AlbumManager {
-  static late User user;
+  static late User _user;
 
   AlbumManager._() {
     var user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       throw ArgumentError("User must be authenticated");
     } else {
-      AlbumManager.user = user;
+      AlbumManager._user = user;
     }
   }
 
@@ -42,15 +42,17 @@ class AlbumManager {
         .map((albumData) => _queryToAlbum(albumData));
   }
 
-  Future<void> create(String albumName) async {
+  Future<bool> create(String albumName) async {
     if (await isNotDuplicate(albumName)) {
-      var newAlbum = _getUserAlbumCollection().doc(albumName);
-      newAlbum.set({
+      await _getUserAlbumCollection().doc(albumName).set({
         "displayName": albumName,
         "queryName": albumName.toLowerCase(),
         "sharedWith": [],
         "photos": [],
       });
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -67,7 +69,7 @@ class AlbumManager {
   }
 
   Future<void> uploadImage(Album album, XFile image) async {
-    var photoUrl = "users/${user.uid}/${const Uuid().v8()}";
+    var photoUrl = "users/${_user.uid}/${const Uuid().v8()}";
     var bytes = await image.readAsBytes();
     _getUserAlbumCollection().doc(album.docId).update({
       "photos": FieldValue.arrayUnion([photoUrl])
@@ -91,7 +93,7 @@ class AlbumManager {
   CollectionReference<Map<String, dynamic>> _getUserAlbumCollection() {
     return FirebaseFirestore.instance
         .collection("users")
-        .doc(user.uid)
+        .doc(_user.uid)
         .collection("albums");
   }
 }
