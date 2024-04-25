@@ -1,7 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:your_trip/data/album_manager.dart';
+
+import '../../data/album.dart';
 
 class AlbumGalleryView extends StatefulWidget {
-  const AlbumGalleryView({super.key});
+  final Album _album;
+
+  const AlbumGalleryView({required Album album, super.key}) : _album = album;
 
   @override
   State<StatefulWidget> createState() {
@@ -14,17 +22,23 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Album Title"),
+        title: Text(widget._album.displayName),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: buildGalleryGrid(context),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {  },
+        onPressed: takePicture,
         child: const Icon(Icons.camera_alt),
       ),
     );
+  }
+
+  Future<void> takePicture() async {
+    final ImagePicker imagePicker = ImagePicker();
+    var image = await imagePicker.pickImage(source: ImageSource.camera);
+    AlbumManager.instance.uploadImage(widget._album, image!);
   }
 
   Widget buildGalleryGrid(BuildContext context) {

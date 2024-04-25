@@ -37,7 +37,7 @@ class AlbumCard extends StatelessWidget {
               pushRoute(context, const AlbumMapView());
             },
             () {
-              pushRoute(context, const AlbumGalleryView());
+              pushRoute(context, AlbumGalleryView(album: _album));
             },
             () {
               pushRoute(context, const AlbumShareView());
