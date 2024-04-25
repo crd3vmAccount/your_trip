@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:your_trip/data/album_manager.dart';
 import 'package:your_trip/views/album/album_gallery_view.dart';
 import 'package:your_trip/views/album/album_map_view.dart';
 import 'package:your_trip/views/album/album_share_view.dart';
 
 import '../data/album.dart';
 
-class AlbumCard extends StatelessWidget {
+class AlbumCard extends StatefulWidget {
   final Album _album;
 
   const AlbumCard({required Album album, super.key}) : _album = album;
 
+  @override
+  State<StatefulWidget> createState() {
+    return _AlbumCardState();
+  }
+}
+
+class _AlbumCardState extends State<AlbumCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,14 +28,15 @@ class AlbumCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
                   child: Text(
-                    _album.displayName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    widget._album.displayName,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15.0),
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 3, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
                     child: _albumPreview()),
               ],
             ),
@@ -37,7 +46,7 @@ class AlbumCard extends StatelessWidget {
               pushRoute(context, const AlbumMapView());
             },
             () {
-              pushRoute(context, AlbumGalleryView(album: _album));
+              pushRoute(context, AlbumGalleryView(album: widget._album));
             },
             () {
               pushRoute(context, const AlbumShareView());
@@ -49,24 +58,39 @@ class AlbumCard extends StatelessWidget {
   }
 
   Widget _albumPreview() {
-    return Container(
-      height: 100,
-      width: double.infinity,
-      color: Colors.grey, // Placeholder for image
-      child: _album.photos.isEmpty
-          ? const Center(
-              child: Text(
-                "No Images",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-              ),
-            )
-          : const Center(
-              child: Text(
-                "Has Images",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-              ),
+    return widget._album.photos.isEmpty
+        ? const Center(
+            child: Text(
+              "No Images",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
-    );
+          )
+        : Center(
+            child: FutureBuilder(
+              future: AlbumManager.instance.staticRandomPhoto(widget._album),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error Retrieving Image: ${snapshot.error}");
+                } else {
+                  return snapshot.data == null
+                      ? const Text("Image does not exist?")
+                      : SizedBox(
+                          width: double.infinity,
+                          height: 200.0,
+                          child: ClipRect(
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                              child: Image.memory(snapshot.data!),
+                            ),
+                          ),
+                        );
+                }
+              },
+            ),
+          );
   }
 
   void pushRoute(BuildContext context, Widget widget) {
@@ -79,6 +103,7 @@ class AlbumCard extends StatelessWidget {
     void Function() onShareClick,
   ) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         ElevatedButton(
           onPressed: onMapClick,
