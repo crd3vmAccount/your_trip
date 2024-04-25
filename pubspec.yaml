@@ -54,6 +54,7 @@ dependencies:
   flutter_map: ^6.1.0               # Map widgets
   flutter_map_location_marker: any  # Current location display
   geolocator: any
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
