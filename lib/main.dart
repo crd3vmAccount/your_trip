@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:your_trip/views/album/album_list_view.dart';
-import 'package:your_trip/views/sign_in_view.dart';
-import 'package:your_trip/views/sign_up_view.dart';
+import 'package:your_trip/views/account_views.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -24,7 +22,7 @@ void main() async {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: const Scaffold(
-          body: SignUpView(),
+          body: SignInView(),
         )),
   );
 }
