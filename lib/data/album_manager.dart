@@ -63,9 +63,11 @@ class AlbumManager {
   }
 
   Future<List<Uint8List>> staticPhotoList(Album album) async {
-    return album.photos.map((p) => photo2Bytes(p))
-      .where((element) => element != null)
-      .toList(growable: false).cast<Uint8List>();
+    return album.photos
+        .map((p) => photo2Bytes(p))
+        .where((element) => element != null)
+        .toList(growable: false)
+        .cast<Uint8List>();
   }
 
   Future<bool> createAlbum(String albumName) async {
@@ -92,6 +94,25 @@ class AlbumManager {
         .limit(1)
         .get();
     return matches.docs.isEmpty;
+  }
+
+  Future<void> shareWith(Album album, String email) async {
+    _getUserAlbumCollection().doc(album.docId).update({
+      "sharedWith": FieldValue.arrayUnion([email])
+    });
+  }
+  
+  Future<void> unshareWith(Album album, String email) async {
+    _getUserAlbumCollection().doc(album.docId).update({
+      "sharedWith": FieldValue.arrayRemove([email])
+    });
+  }
+
+  Stream<List<String>> liveSharedWith(Album album) {
+    return _getUserAlbumCollection()
+        .doc(album.docId)
+        .snapshots()
+        .map((snapshot) => _retrieveStringList(snapshot.data()?["sharedWith"]));
   }
 
   Stream<List<Photo>> livePhotos(Album album) {
