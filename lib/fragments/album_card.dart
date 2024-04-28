@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:your_trip/data/album_manager.dart';
 import 'package:your_trip/views/album/album_gallery_view.dart';
 import 'package:your_trip/views/album/album_map_view.dart';
-import 'package:your_trip/views/album/album_share_view.dart';
 
 import '../data/album.dart';
+import '../views/album/album_share_view.dart';
 
 class AlbumCard extends StatefulWidget {
   final Album _album;
