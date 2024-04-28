@@ -84,7 +84,7 @@ class _AlbumCreateState extends State<AlbumCreateDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return FloatingActionButton(
       onPressed: _showAlbumCreateDialog,
       child: const Icon(Icons.add),
     );
