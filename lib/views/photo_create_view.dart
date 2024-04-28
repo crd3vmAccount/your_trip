@@ -28,9 +28,9 @@ class _TakePhotoState extends State<TakePhoto> {
         ),
         file != null
             ? Image.file(
-          file!,
-          fit: BoxFit.cover,
-        )
+                file!,
+                fit: BoxFit.cover,
+              )
             : const Text('no image selected')
       ],
     );
