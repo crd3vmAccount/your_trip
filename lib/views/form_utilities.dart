@@ -19,6 +19,7 @@ Widget formCard({required String title, required Widget form}) {
       horizontal: 40,
       vertical: 20,
     ),
+    width: double.infinity,
     child: Card(
       elevation: 5,
       shape: buildCardBorder(),
@@ -51,22 +52,29 @@ Widget cardPrompt({
   required String buttonText,
   required void Function() onPressed,
 }) {
-  return Card(
-    elevation: 5,
-    shape: buildCardBorder(),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-      child: Column(
-        children: [
-          Text(title),
-          const SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-            onPressed: onPressed,
-            child: Text(buttonText),
-          )
-        ],
+  return Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 40,
+      vertical: 10,
+    ),
+    width: double.infinity,
+    child: Card(
+      elevation: 5,
+      shape: buildCardBorder(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+        child: Column(
+          children: [
+            Text(title),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: onPressed,
+              child: Text(buttonText),
+            )
+          ],
+        ),
       ),
     ),
   );

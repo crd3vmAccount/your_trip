@@ -1,3 +1,6 @@
+import 'dart:js_interop';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:your_trip/data/album_manager.dart';
 
@@ -35,22 +38,102 @@ class AlbumShareView extends StatelessWidget {
   }
 
   Widget accountListCards() {
-    return Card(
-      elevation: 5,
-      shape: buildCardBorder(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Shared With"),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 40,
+        vertical: 16,
+      ),
+      child: Card(
+        elevation: 5,
+        shape: buildCardBorder(),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Shared With"),
+              const SizedBox(
+                height: 10,
+              ),
+              StreamBuilder(
+                stream: AlbumManager.instance.liveSharedWith(album),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Text("Error: could not retrieve accounts.");
+                  } else {
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return const Text(
+                        "Not shared with any accounts.",
+                      );
+                    } else {
+                      return ShareList(
+                        album: album,
+                        accounts: snapshot.data!,
+                      );
+                    }
+                  }
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class ShareList extends StatefulWidget {
+  final Album album;
+  final List<String> accounts;
+
+  const ShareList({required this.album, required this.accounts, super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ShareListState();
+  }
+}
+
+class _ShareListState extends State<ShareList> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.accounts.length,
+            itemBuilder: (context, index) {
+              if (widget.accounts.isEmpty) {
+                return const Text(
+                  "Not shared with any accounts.",
+                );
+              } else {
+                return ListTile(
+                  title: Text(widget.accounts[index]),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await AlbumManager.instance.unshareWith(
+                        widget.album,
+                        widget.accounts[index],
+                      );
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    },
+                  ),
+                );
+              }
+            },
+          );
   }
 }
 
