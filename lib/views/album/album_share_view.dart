@@ -15,15 +15,15 @@ class AlbumShareView extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          "Share",
+        title: Text(
+          album.displayName,
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             formCard(
-              title: 'Share Album',
+              title: 'Share With',
               form: ShareAlbumForm(
                 album: album,
               ),
