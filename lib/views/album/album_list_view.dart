@@ -25,12 +25,19 @@ class AlbumListView extends StatelessWidget {
                 return Text("Error: ${snapshot.error}");
               } else if (snapshot.hasData) {
                 var data = snapshot.data!;
-                return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (listContext, index) {
-                      return AlbumCard(album: data[index]);
-                    }
-                );
+                if (data.isEmpty) {
+                  return const Card(
+                    elevation: 5,
+                    child: Center(child: Text("No Albums"),),
+                  );
+                } else {
+                  return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (listContext, index) {
+                        return AlbumCard(album: data[index]);
+                      }
+                  );
+                }
               } else {
                 return const CircularProgressIndicator();
               }

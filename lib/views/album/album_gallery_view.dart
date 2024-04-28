@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -39,7 +38,9 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
   Future<void> takePicture() async {
     final ImagePicker imagePicker = ImagePicker();
     var image = await imagePicker.pickImage(source: ImageSource.camera);
-    if (image != null) await AlbumManager.instance.uploadImage(widget._album, image);
+    if (image != null) {
+      await AlbumManager.instance.uploadImage(widget._album, image);
+    }
   }
 
   Widget _buildGallery() {
@@ -57,28 +58,37 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
     );
   }
 
-  GridView _buildPhotoGrid(AsyncSnapshot<List<Future<Uint8List?>>> snapshot) {
+  Widget _buildPhotoGrid(AsyncSnapshot<List<Future<Uint8List?>>> snapshot) {
     var images = snapshot.data!;
-    return GridView.builder(
-      itemCount: images.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-      ),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-            onTap: () {
-              // Handle image tap
-            },
-            child: Container(
-              width: double.infinity,
-              height: 100,
-              color: Colors.black38,
-              child: _imageFromBytes(images[index]),
-            ));
-      },
-    );
+    if (images.isEmpty) {
+      return const Card(
+        elevation: 5,
+        child: Center(
+          child: Text("No photos"),
+        ),
+      );
+    } else {
+      return GridView.builder(
+        itemCount: images.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+        ),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+              onTap: () {
+                // Handle image tap
+              },
+              child: Container(
+                width: double.infinity,
+                height: 100,
+                color: Colors.black38,
+                child: _imageFromBytes(images[index]),
+              ));
+        },
+      );
+    }
   }
 
   Widget _imageFromBytes(Future<Uint8List?> bytes) {
