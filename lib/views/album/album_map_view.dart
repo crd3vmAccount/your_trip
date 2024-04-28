@@ -60,7 +60,7 @@ class _AlbumMapState extends State<AlbumMapWidget> {
             return Text("Error: ${snapshot.error}");
           } else {
             return FlutterMap(
-              options: ([0, 1].contains(widget.album.photos.length))
+              options: ([0, 1].contains(widget.album.photos.map((e) => e.location).toSet().length))
                   ? MapOptions(initialCenter: snapshot.data!)
                   : MapOptions(
                       initialCameraFit: CameraFit.bounds(
