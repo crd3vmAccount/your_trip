@@ -22,6 +22,7 @@ class _AlbumCardState extends State<AlbumCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 10,
       child: Row(
         children: [
           Expanded(
