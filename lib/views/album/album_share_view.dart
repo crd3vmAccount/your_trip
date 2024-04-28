@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:your_trip/data/album_manager.dart';
@@ -156,6 +154,8 @@ class _ShareAlbumFormState extends State<ShareAlbumForm> {
   String? _validateAccountName(String? accountName) {
     if (accountName == null || accountName.isEmpty) {
       return "Name must not be blank";
+    } else if (accountName == FirebaseAuth.instance.currentUser!.email) {
+      return "Cannot share with self";
     } else {
       return null;
     }
