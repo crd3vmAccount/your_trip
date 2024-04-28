@@ -115,9 +115,9 @@ class _AlbumCardState extends State<AlbumCard> {
           onPressed: onGalleryClick,
           child: const Icon(Icons.auto_awesome_mosaic_rounded),
         ),
-        IconButton(
-          icon: const Icon(Icons.share),
+        ElevatedButton(
           onPressed: onShareClick,
+          child: const Icon(Icons.share),
         ),
         AlbumEditDialog(album: widget._album),
       ],

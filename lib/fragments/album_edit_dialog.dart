@@ -40,6 +40,13 @@ class _AlbumEditState extends State<AlbumEditDialog> {
             actions: [
               ElevatedButton(
                 onPressed: _closeForm,
+                child: const Icon(
+                  color: Colors.red,
+                  Icons.delete,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _closeForm,
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
@@ -99,9 +106,9 @@ class _AlbumEditState extends State<AlbumEditDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.edit),
+    return ElevatedButton(
       onPressed: _showAlbumCreateDialog,
+      child: const Icon(Icons.edit),
     );
   }
 }
