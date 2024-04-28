@@ -22,9 +22,36 @@ class _AlbumEditState extends State<AlbumEditDialog> {
   @override
   void initState() {
     super.initState();
-    print(widget.album.displayName);
     _textFieldController = TextEditingController(
       text: widget.album.displayName,
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Are you sure you want to delete this item?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();  // close both dialogs
+                AlbumManager.instance.deleteAlbum(widget.album);
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -39,7 +66,9 @@ class _AlbumEditState extends State<AlbumEditDialog> {
             content: _albumNameField(),
             actions: [
               ElevatedButton(
-                onPressed: _closeForm,
+                onPressed: () async {
+                  _showConfirmationDialog(context);
+                },
                 child: const Icon(
                   color: Colors.red,
                   Icons.delete,
@@ -62,7 +91,6 @@ class _AlbumEditState extends State<AlbumEditDialog> {
 
   void _closeForm() {
     _isDuplicate = false;
-    _textFieldController.clear();
     Navigator.of(context).pop();
   }
 
@@ -102,6 +130,12 @@ class _AlbumEditState extends State<AlbumEditDialog> {
       },
       decoration: const InputDecoration(labelText: "Name"),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _textFieldController.dispose();
   }
 
   @override
