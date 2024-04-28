@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../data/album.dart';
 import '../../data/album_manager.dart';
@@ -60,17 +61,7 @@ class _AlbumMapState extends State<AlbumMapWidget> {
             return Text("Error: ${snapshot.error}");
           } else {
             return FlutterMap(
-              options: ([0, 1].contains(widget.album.photos.map((e) => e.location).toSet().length))
-                  ? MapOptions(initialCenter: snapshot.data!)
-                  : MapOptions(
-                      initialCameraFit: CameraFit.bounds(
-                        bounds: LatLngBounds.fromPoints(
-                          widget.album.photos
-                              .map((e) => e.location)
-                              .toList(growable: false),
-                        ),
-                      ),
-                    ),
+              options: _buildMapOptions(snapshot.data!),
               children: [
                 _buildTileLayer(),
                 _buildCurrentLocationLayer(),
@@ -79,6 +70,21 @@ class _AlbumMapState extends State<AlbumMapWidget> {
             );
           }
         });
+  }
+
+  MapOptions _buildMapOptions(LatLng currentLocation) {
+    var uniqueLocations = widget.album.photos.map((e) => e.location).toSet();
+    if ([0, 1].contains(uniqueLocations.length)) {
+      return MapOptions(initialCenter: currentLocation);
+    } else {
+      return MapOptions(
+        initialCameraFit: CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints(
+            uniqueLocations.toList(growable: false),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildStopMarkerLayer() {
