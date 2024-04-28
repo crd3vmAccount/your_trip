@@ -1,9 +1,11 @@
+import 'package:your_trip/data/photo.dart';
+
 class Album {
   final String docId;
   final String displayName;
   late final String queryName;
   final List<String> sharedWith;
-  final List<String> photos;
+  final List<Photo> photos;
 
   Album(
     this.docId,

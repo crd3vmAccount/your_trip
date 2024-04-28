@@ -4,6 +4,8 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../data/location_manager.dart';
+
 class AlbumMapView extends StatelessWidget {
   const AlbumMapView({super.key});
 
@@ -35,7 +37,7 @@ class _AlbumMapState extends State<AlbumMapWidget> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _currentPositionOrDefault(),
+        future: LocationManager.currentPositionOrDefault(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -51,24 +53,6 @@ class _AlbumMapState extends State<AlbumMapWidget> {
             );
           }
         });
-  }
-
-  Future<LatLng> _currentPositionOrDefault() async {
-    bool locationEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!locationEnabled) {
-      return const LatLng(50.5, 30.51);
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return const LatLng(50.5, 30.51);
-      }
-    } else if (permission == LocationPermission.deniedForever) {
-      return const LatLng(50.5, 30.51);
-    }
-    var position = await Geolocator.getCurrentPosition();
-    return LatLng(position.latitude, position.longitude);
   }
 
   Widget _buildCurrentLocationLayer() {
