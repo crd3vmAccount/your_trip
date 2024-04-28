@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +21,7 @@ class AlbumManager {
     return _instance;
   }
 
-  Future<Album> staticGet(String albumName) async {
+  Future<Album> staticAlbumGet(String albumName) async {
     return (await _getUserAlbumCollection()
             .where("queryName", isEqualTo: albumName.toLowerCase())
             .limit(1)
@@ -32,7 +31,7 @@ class AlbumManager {
         .single;
   }
 
-  Stream<Album> liveGet(String albumName) {
+  Stream<Album> liveAlbumGet(String albumName) {
     return _getUserAlbumCollection()
         .where("queryName", isEqualTo: albumName.toLowerCase())
         .limit(1)
@@ -41,20 +40,20 @@ class AlbumManager {
         .map((albumData) => _queryToAlbum(albumData));
   }
 
-  Future<List<Album>> staticList() async {
+  Future<List<Album>> staticAlbumList() async {
     return (await _getUserAlbumCollection().get())
         .docs
         .map((d) => _queryToAlbum(d))
         .toList();
   }
 
-  Stream<List<Album>> liveList() {
+  Stream<List<Album>> liveAlbumList() {
     return _getUserAlbumCollection()
         .snapshots()
         .map((snapshot) => snapshot.docs.map((d) => _queryToAlbum(d)).toList());
   }
 
-  Future<Uint8List?> staticRandomPhoto(Album album) async {
+  Future<Uint8List?> staticRandomPhotoBytes(Album album) async {
     var photo = album.photos[Random().nextInt(album.photos.length)];
     return photo2Bytes(photo);
   }
@@ -69,7 +68,7 @@ class AlbumManager {
       .toList(growable: false).cast<Uint8List>();
   }
 
-  Future<bool> create(String albumName) async {
+  Future<bool> createAlbum(String albumName) async {
     if (await isNotDuplicate(albumName)) {
       await _getUserAlbumCollection().doc(albumName).set({
         "displayName": albumName,

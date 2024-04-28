@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../data/album.dart';
 import '../../data/album_manager.dart';
@@ -143,7 +142,6 @@ class _PhotoMarker extends StatelessWidget {
   const _PhotoMarker(this.photo);
 
   void _showImagePreviewDialog(BuildContext context, Photo photo) {
-    print("Show dialog");
     showDialog(
       context: context,
       builder: (BuildContext context) {

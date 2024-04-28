@@ -49,7 +49,7 @@ class _AlbumCardState extends State<AlbumCard> {
               pushRoute(context, AlbumGalleryView(album: widget._album));
             },
             () {
-              pushRoute(context, const AlbumShareView());
+              pushRoute(context, AlbumShareView(album: widget._album));
             },
           ),
         ],
@@ -67,7 +67,7 @@ class _AlbumCardState extends State<AlbumCard> {
           )
         : Center(
             child: FutureBuilder(
-              future: AlbumManager.instance.staticRandomPhoto(widget._album),
+              future: AlbumManager.instance.staticRandomPhotoBytes(widget._album),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();

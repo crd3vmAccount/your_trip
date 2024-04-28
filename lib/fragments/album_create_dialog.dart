@@ -50,7 +50,7 @@ class _AlbumCreateState extends State<AlbumCreateDialog> {
     var formState = _formKey.currentState;
     if (formState?.validate() ?? false) {
       var albumName = _textFieldController.value.text;
-      if (await AlbumManager.instance.create(albumName)) {
+      if (await AlbumManager.instance.createAlbum(albumName)) {
         _closeForm();
       } else {
         setState(() {

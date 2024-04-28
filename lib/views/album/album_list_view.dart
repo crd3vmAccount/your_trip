@@ -19,7 +19,7 @@ class AlbumListView extends StatelessWidget {
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
           child: StreamBuilder(
-            stream: AlbumManager.instance.liveList(),
+            stream: AlbumManager.instance.liveAlbumList(),
             builder: (streamContext, snapshot) {
               if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");

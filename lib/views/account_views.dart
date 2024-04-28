@@ -418,19 +418,14 @@ class _SignInFormState extends State<SignInForm> {
                         onValid: () async {
                           if (FirebaseAuth.instance.currentUser != null) {
                             await FirebaseAuth.instance.signOut();
-                            print('Signed out');
-                            print(FirebaseAuth.instance.currentUser);
                           }
                           await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                             email: _emailController.text,
                             password: _passwordController.text,
                           );
-                          print(FirebaseAuth.instance.currentUser);
-
                         },
                         onNavigate: () {
-                          print("Nav");
                           _navigateToHomeView(context);
                           _showSnackBar(context, 'Signed In');
                         },

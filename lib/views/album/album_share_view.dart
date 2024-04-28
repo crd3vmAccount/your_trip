@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../data/album.dart';
+
 class AlbumShareView extends StatefulWidget {
-  const AlbumShareView({super.key});
+  final Album album;
+  const AlbumShareView({required this.album, super.key});
 
   @override
   State createState() => _AlbumShareState();
