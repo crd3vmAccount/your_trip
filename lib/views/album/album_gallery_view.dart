@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:your_trip/data/album_manager.dart';
+import 'package:your_trip/views/photo_detail_view.dart';
 
 import '../../data/album.dart';
 
@@ -76,16 +77,12 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
           mainAxisSpacing: 5.0,
         ),
         itemBuilder: (context, index) {
-          return GestureDetector(
-              onTap: () {
-                // Handle image tap
-              },
-              child: Container(
-                width: double.infinity,
-                height: 100,
-                color: Colors.black38,
-                child: _imageFromBytes(images[index]),
-              ));
+          return Container(
+            width: double.infinity,
+            height: 100,
+            color: Colors.black38,
+            child: _imageFromBytes(images[index]),
+          );
         },
       );
     }
@@ -93,20 +90,31 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
 
   Widget _imageFromBytes(Future<Uint8List?> bytes) {
     return FutureBuilder(
-        future: bytes,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text("Error: ${snapshot.error}");
-          } else {
-            return snapshot.data == null
-                ? const Text("Image Failed to Load")
-                : Image.memory(
+      future: bytes,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else {
+          return snapshot.data == null
+              ? const Text("Image Failed to Load")
+              : GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PhotoDetailView(imageBytes: snapshot.data!),
+                      ),
+                    );
+                  },
+                  child: Image.memory(
                     snapshot.data!,
                     fit: BoxFit.fill,
-                  );
-          }
-        });
+                  ),
+                );
+        }
+      },
+    );
   }
 }
