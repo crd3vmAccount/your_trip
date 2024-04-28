@@ -19,6 +19,8 @@ class AlbumGalleryView extends StatefulWidget {
 }
 
 class _AlbumGalleryState extends State<AlbumGalleryView> {
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,24 +41,34 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
   Future<void> takePicture() async {
     final ImagePicker imagePicker = ImagePicker();
     var image = await imagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _isLoading = true;
+    });
     if (image != null) {
       await AlbumManager.instance.uploadImage(widget._album, image);
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Widget _buildGallery() {
-    return StreamBuilder(
-      stream: AlbumManager.instance.livePhotoBytes(widget._album),
-      builder: (streamContext, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error!: ${snapshot.error}");
-        } else {
-          return _buildPhotoGrid(snapshot);
-        }
-      },
-    );
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : StreamBuilder(
+            stream: AlbumManager.instance.livePhotoBytes(widget._album),
+            builder: (streamContext, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("Error!: ${snapshot.error}");
+              } else {
+                return _buildPhotoGrid(snapshot);
+              }
+            },
+          );
   }
 
   Widget _buildPhotoGrid(AsyncSnapshot<List<Future<Uint8List?>>> snapshot) {
