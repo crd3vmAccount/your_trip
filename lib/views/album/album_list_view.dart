@@ -3,7 +3,6 @@ import 'package:your_trip/data/album_manager.dart';
 import 'package:your_trip/fragments/album_card.dart';
 import 'package:your_trip/fragments/album_create_dialog.dart';
 
-import '../../data/album.dart';
 
 class AlbumListView extends StatelessWidget {
   const AlbumListView({super.key});

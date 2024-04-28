@@ -10,16 +10,7 @@ import 'package:uuid/uuid.dart';
 import 'album.dart';
 
 class AlbumManager {
-  static late User _user;
-
-  AlbumManager._() {
-    var user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw ArgumentError("User must be authenticated");
-    } else {
-      AlbumManager._user = user;
-    }
-  }
+  AlbumManager._();
 
   static final AlbumManager _instance = AlbumManager._();
 
@@ -113,8 +104,15 @@ class AlbumManager {
             .toList());
   }
 
+  String uid() {
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ArgumentError("User must be authenticated");
+    }
+    return FirebaseAuth.instance.currentUser!.uid;
+  }
+
   Future<void> uploadImage(Album album, XFile image) async {
-    var folder = "users/${_user.uid}";
+    var folder = "users/${uid()}";
     var file = const Uuid().v8();
     var bytes = await image.readAsBytes();
     var reference = FirebaseStorage.instance.ref(folder).child(file);
@@ -142,7 +140,7 @@ class AlbumManager {
   CollectionReference<Map<String, dynamic>> _getUserAlbumCollection() {
     return FirebaseFirestore.instance
         .collection("users")
-        .doc(_user.uid)
+        .doc(uid())
         .collection("albums");
   }
 }

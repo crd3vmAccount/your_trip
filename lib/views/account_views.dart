@@ -245,6 +245,10 @@ class _SignUpFormState extends State<SignUpForm> {
                           _navigateToHomeView(context);
                         },
                         onValid: () async {
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            await FirebaseAuth.instance.signOut();
+                          }
+
                           await FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                             email: _emailController.text,
@@ -412,13 +416,21 @@ class _SignInFormState extends State<SignInForm> {
                     onPressed: () {
                       _submitForm(
                         onValid: () async {
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            await FirebaseAuth.instance.signOut();
+                            print('Signed out');
+                            print(FirebaseAuth.instance.currentUser);
+                          }
                           await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                             email: _emailController.text,
                             password: _passwordController.text,
                           );
+                          print(FirebaseAuth.instance.currentUser);
+
                         },
                         onNavigate: () {
+                          print("Nav");
                           _navigateToHomeView(context);
                           _showSnackBar(context, 'Signed In');
                         },
@@ -441,7 +453,7 @@ class _SignInFormState extends State<SignInForm> {
 
   Future<void> _submitForm({
     required void Function() onNavigate,
-    required void Function() onValid,
+    required Future<void> Function() onValid,
     required void Function(Object e) onError,
   }) async {
     if (_formKey.currentState!.validate()) {
@@ -449,7 +461,7 @@ class _SignInFormState extends State<SignInForm> {
         setState(() {
           _isLoading = true;
         });
-        onValid();
+        await onValid();
         onNavigate();
       } catch (e) {
         onError(e);
