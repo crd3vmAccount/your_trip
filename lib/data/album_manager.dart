@@ -71,6 +71,13 @@ class AlbumManager {
         .cast<Uint8List>();
   }
 
+  Future<void> deleteAlbum(Album album) async {
+    album.photos.map((photo) => photo.photoUrl).forEach((photoUrl) {
+      FirebaseStorage.instance.ref(photoUrl).delete();
+    });
+    await _getUserAlbumCollection().doc(album.docId).delete();
+  }
+
   Future<bool> renameAlbum(Album album, String newName) async {
     if (await isNotDuplicate(newName)) {
       await _getUserAlbumCollection().doc(album.docId).update({
