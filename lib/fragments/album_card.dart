@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:your_trip/data/album_manager.dart';
+import 'package:your_trip/fragments/album_edit_dialog.dart';
 import 'package:your_trip/views/album/album_gallery_view.dart';
 import 'package:your_trip/views/album/album_map_view.dart';
 
@@ -67,7 +68,8 @@ class _AlbumCardState extends State<AlbumCard> {
           )
         : Center(
             child: FutureBuilder(
-              future: AlbumManager.instance.staticRandomPhotoBytes(widget._album),
+              future:
+                  AlbumManager.instance.staticRandomPhotoBytes(widget._album),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -117,6 +119,7 @@ class _AlbumCardState extends State<AlbumCard> {
           icon: const Icon(Icons.share),
           onPressed: onShareClick,
         ),
+        AlbumEditDialog(album: widget._album),
       ],
     );
   }
