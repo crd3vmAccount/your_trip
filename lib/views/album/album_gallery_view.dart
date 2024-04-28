@@ -46,7 +46,7 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
 
   Widget _buildGallery() {
     return StreamBuilder(
-      stream: AlbumManager.instance.livePhotos(widget._album),
+      stream: AlbumManager.instance.livePhotoBytes(widget._album),
       builder: (streamContext, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();

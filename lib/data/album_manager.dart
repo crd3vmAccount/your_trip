@@ -98,7 +98,14 @@ class AlbumManager {
     return matches.docs.isEmpty;
   }
 
-  Stream<List<Future<Uint8List?>>> livePhotos(Album album) {
+  Stream<List<Photo>> livePhotos(Album album) {
+    return _getUserAlbumCollection()
+        .doc(album.docId)
+        .snapshots()
+        .map((snapshot) => _retrievePhotoList(snapshot.data()?["photos"]));
+  }
+
+  Stream<List<Future<Uint8List?>>> livePhotoBytes(Album album) {
     return _getUserAlbumCollection()
         .doc(album.docId)
         .snapshots()

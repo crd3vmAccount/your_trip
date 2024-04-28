@@ -43,7 +43,7 @@ class _AlbumCardState extends State<AlbumCard> {
           ),
           _buttonColumn(
             () {
-              pushRoute(context, const AlbumMapView());
+              pushRoute(context, AlbumMapView(album: widget._album));
             },
             () {
               pushRoute(context, AlbumGalleryView(album: widget._album));

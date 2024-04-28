@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../data/album.dart';
+import '../../data/album_manager.dart';
 import '../../data/location_manager.dart';
+import '../../data/photo.dart';
 
 class AlbumMapView extends StatelessWidget {
-  const AlbumMapView({super.key});
+  final Album album;
+
+  const AlbumMapView({required this.album, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +22,28 @@ class AlbumMapView extends StatelessWidget {
         title: const Text("Album Title"),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: takePicture,
         child: const Icon(Icons.camera_alt),
       ),
-      body: const AlbumMapWidget(),
+      body: AlbumMapWidget(album: album),
     );
+  }
+
+  Future<void> takePicture() async {
+    final ImagePicker imagePicker = ImagePicker();
+    var image = await imagePicker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      await AlbumManager.instance.uploadImage(album, image);
+    }
   }
 }
 
+
+
 class AlbumMapWidget extends StatefulWidget {
-  const AlbumMapWidget({super.key});
+  final Album album;
+
+  const AlbumMapWidget({required this.album, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -49,10 +67,38 @@ class _AlbumMapState extends State<AlbumMapWidget> {
               children: [
                 _buildTileLayer(),
                 _buildCurrentLocationLayer(),
+                _buildStopMarkerLayer(),
               ],
             );
           }
         });
+  }
+
+  Widget _buildStopMarkerLayer() {
+    return StreamBuilder(
+      stream: AlbumManager.instance.livePhotos(widget.album),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return MarkerLayer(
+              markers: snapshot.data!.map((p) => Marker(
+                point: p.location,
+                width: 350,
+                child: const _PhotoMarker(),
+              )).toList(growable: false)
+          );
+        } else {
+          return MarkerLayer(
+            markers: widget.album.photos
+                .map((photo) => Marker(
+              point: photo.location,
+              width: 350,
+              child: const _PhotoMarker(),
+            ))
+                .toList(growable: false),
+          );
+        }
+      },
+    );
   }
 
   Widget _buildCurrentLocationLayer() {
@@ -90,4 +136,17 @@ class _AlbumMapState extends State<AlbumMapWidget> {
         urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         userAgentPackageName: "dev.flutter",
       );
+}
+
+class _PhotoMarker extends StatelessWidget {
+  const _PhotoMarker();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      Icons.location_pin,
+      size: 50,
+      color: Colors.red,
+    );
+  }
 }
