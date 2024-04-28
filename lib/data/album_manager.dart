@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
+import 'package:uuid/v8.dart';
 import 'package:your_trip/data/location_manager.dart';
 import 'package:your_trip/data/photo.dart';
 
@@ -70,9 +71,22 @@ class AlbumManager {
         .cast<Uint8List>();
   }
 
+  Future<bool> renameAlbum(Album album, String newName) async {
+    if (await isNotDuplicate(newName)) {
+      await _getUserAlbumCollection().doc(album.docId).update({
+        "displayName": newName,
+        "queryName": newName.toLowerCase(),
+      });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> createAlbum(String albumName) async {
     if (await isNotDuplicate(albumName)) {
-      await _getUserAlbumCollection().doc(albumName).set({
+      var uniqueId = const Uuid().v8();
+      await _getUserAlbumCollection().doc(uniqueId).set({
         "displayName": albumName,
         "queryName": albumName.toLowerCase(),
         "sharedWith": [],
@@ -101,7 +115,7 @@ class AlbumManager {
       "sharedWith": FieldValue.arrayUnion([email])
     });
   }
-  
+
   Future<void> unshareWith(Album album, String email) async {
     _getUserAlbumCollection().doc(album.docId).update({
       "sharedWith": FieldValue.arrayRemove([email])
