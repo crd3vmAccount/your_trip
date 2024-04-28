@@ -60,7 +60,17 @@ class _AlbumMapState extends State<AlbumMapWidget> {
             return Text("Error: ${snapshot.error}");
           } else {
             return FlutterMap(
-              options: MapOptions(initialCenter: snapshot.data!),
+              options: ([0, 1].contains(widget.album.photos.length))
+                  ? MapOptions(initialCenter: snapshot.data!)
+                  : MapOptions(
+                      initialCameraFit: CameraFit.bounds(
+                        bounds: LatLngBounds.fromPoints(
+                          widget.album.photos
+                              .map((e) => e.location)
+                              .toList(growable: false),
+                        ),
+                      ),
+                    ),
               children: [
                 _buildTileLayer(),
                 _buildCurrentLocationLayer(),
@@ -150,7 +160,9 @@ class _PhotoMarker extends StatelessWidget {
             future: AlbumManager.instance.photo2Bytes(photo),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(),);
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
               } else {
