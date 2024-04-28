@@ -35,7 +35,7 @@ class _AlbumEditState extends State<AlbumEditDialog> {
         return Form(
           key: _formKey,
           child: AlertDialog(
-            title: Text("Editing: ${widget.album.displayName}"),
+            title: Text("Edit: ${widget.album.displayName}"),
             content: _albumNameField(),
             actions: [
               ElevatedButton(
