@@ -19,7 +19,7 @@ class AlbumMapView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Album Title"),
+        title: Text(album.displayName),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: takePicture,
