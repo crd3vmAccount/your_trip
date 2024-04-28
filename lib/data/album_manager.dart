@@ -56,20 +56,17 @@ class AlbumManager {
 
   Future<Uint8List?> staticRandomPhoto(Album album) async {
     var photo = album.photos[Random().nextInt(album.photos.length)];
-    print(photo);
+    return photo2Bytes(photo);
+  }
+
+  Future<Uint8List?> photo2Bytes(Photo photo) async {
     return await FirebaseStorage.instance.ref(photo.photoUrl).getData();
   }
 
   Future<List<Uint8List>> staticPhotoList(Album album) async {
-    List<Uint8List> futures = [];
-    for (String url in album.photos.map((p) => p.photoUrl)) {
-      var reference = FirebaseStorage.instance.ref(url);
-      var data = await reference.getData();
-      if (data != null) {
-        futures.add(data);
-      }
-    }
-    return futures;
+    return album.photos.map((p) => photo2Bytes(p))
+      .where((element) => element != null)
+      .toList(growable: false).cast<Uint8List>();
   }
 
   Future<bool> create(String albumName) async {

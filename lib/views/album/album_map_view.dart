@@ -38,8 +38,6 @@ class AlbumMapView extends StatelessWidget {
   }
 }
 
-
-
 class AlbumMapWidget extends StatefulWidget {
   final Album album;
 
@@ -80,20 +78,21 @@ class _AlbumMapState extends State<AlbumMapWidget> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return MarkerLayer(
-              markers: snapshot.data!.map((p) => Marker(
-                point: p.location,
-                width: 350,
-                child: const _PhotoMarker(),
-              )).toList(growable: false)
-          );
+              markers: snapshot.data!
+                  .map((photo) => Marker(
+                        point: photo.location,
+                        width: 350,
+                        child: _PhotoMarker(photo),
+                      ))
+                  .toList(growable: false));
         } else {
           return MarkerLayer(
             markers: widget.album.photos
                 .map((photo) => Marker(
-              point: photo.location,
-              width: 350,
-              child: const _PhotoMarker(),
-            ))
+                      point: photo.location,
+                      width: 350,
+                      child: _PhotoMarker(photo),
+                    ))
                 .toList(growable: false),
           );
         }
@@ -139,14 +138,56 @@ class _AlbumMapState extends State<AlbumMapWidget> {
 }
 
 class _PhotoMarker extends StatelessWidget {
-  const _PhotoMarker();
+  final Photo photo;
+
+  const _PhotoMarker(this.photo);
+
+  void _showImagePreviewDialog(BuildContext context, Photo photo) {
+    print("Show dialog");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: FutureBuilder(
+            future: AlbumManager.instance.photo2Bytes(photo),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator(),);
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                return snapshot.data == null
+                    ? const Text("Error: Could not retrieve image.")
+                    : Image.memory(snapshot.data!);
+              }
+            },
+          ),
+          elevation: 5,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Icon(
-      Icons.location_pin,
-      size: 50,
-      color: Colors.red,
-    );
+    return Tooltip(
+        message: "Preview Image",
+        triggerMode: TooltipTriggerMode.tap,
+        onTriggered: () {
+          _showImagePreviewDialog(context, photo);
+        },
+        child: const Icon(
+          Icons.location_pin,
+          size: 50,
+          color: Colors.red,
+        ));
   }
 }
