@@ -44,6 +44,9 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
                   widget._album,
                   _selectedPhoto!,
                 );
+                setState(() {
+                  _selectedPhoto = null;
+                });
               },
               child: const Text('Yes'),
             ),

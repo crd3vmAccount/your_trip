@@ -162,26 +162,32 @@ class AlbumManager {
   }
 
   Future<void> uploadImage(Album album, XFile image) async {
-    var coordinates = await LocationManager.currentPositionOrDefault();
     var folder = "users/${uid()}";
     var file = const Uuid().v8();
-    var bytes = await image.readAsBytes();
-    var reference = FirebaseStorage.instance.ref(folder).child(file);
-    var uploadTask = reference.putData(bytes);
-    await uploadTask.whenComplete(() async => {
-          await _getAlbumCollection().doc(album.docId).update({
-            "photos": FieldValue.arrayUnion([
-              {
-                "photoUrl": "$folder/$file",
-                "location": {
-                  "latitude": coordinates.latitude,
-                  "longitude": coordinates.longitude,
-                },
-              }
-            ]),
-            "lastEdited": FieldValue.serverTimestamp(),
-          })
-        });
+    var photoUrl = "$folder/$file";
+    await _uploadImageToStorage(image, photoUrl);
+    _uploadImageToAlbum(album, photoUrl);
+  }
+
+  Future<void> _uploadImageToStorage(XFile image, String photoUrl) async {
+    var ref = FirebaseStorage.instance.ref(photoUrl);
+    ref.putData(await image.readAsBytes());
+  }
+
+  Future<void> _uploadImageToAlbum(Album album, String photoUrl) async {
+    var location = await LocationManager.currentPositionOrDefault();
+    _getAlbumCollection().doc(album.docId).update({
+      "photos": FieldValue.arrayUnion([
+        {
+          "photoUrl": photoUrl,
+          "location": {
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+          },
+        }
+      ]),
+      "lastEdited": FieldValue.serverTimestamp(),
+    });
   }
 
   Album _queryToAlbum(
