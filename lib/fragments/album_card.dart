@@ -43,16 +43,19 @@ class _AlbumCardState extends State<AlbumCard> {
               ],
             ),
           ),
-          _buttonColumn(
-            () {
-              pushRoute(context, AlbumMapView(album: widget._album));
-            },
-            () {
-              pushRoute(context, AlbumGalleryView(album: widget._album));
-            },
-            () {
-              pushRoute(context, AlbumShareView(album: widget._album));
-            },
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: _buttonColumn(
+              () {
+                pushRoute(context, AlbumMapView(album: widget._album));
+              },
+              () {
+                pushRoute(context, AlbumGalleryView(album: widget._album));
+              },
+              () {
+                pushRoute(context, AlbumShareView(album: widget._album));
+              },
+            ),
           ),
         ],
       ),
@@ -81,11 +84,12 @@ class _AlbumCardState extends State<AlbumCard> {
                   return Text("Error Retrieving Image: ${snapshot.error}");
                 } else {
                   return snapshot.data == null
-                      ? const Text("Image does not exist?")
+                      ? const Text("Error retrieving image.")
                       : SizedBox(
                           width: double.infinity,
                           height: 200.0,
-                          child: ClipRect(
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.all(Radius.circular(7)),
                             child: FittedBox(
                               fit: BoxFit.cover,
                               alignment: Alignment.center,
@@ -119,10 +123,11 @@ class _AlbumCardState extends State<AlbumCard> {
           onPressed: onGalleryClick,
           child: const Icon(Icons.auto_awesome_mosaic_rounded),
         ),
-        if (!widget._album.isShared) ElevatedButton(
-          onPressed: onShareClick,
-          child: const Icon(Icons.share),
-        ),
+        if (!widget._album.isShared)
+          ElevatedButton(
+            onPressed: onShareClick,
+            child: const Icon(Icons.share),
+          ),
         if (!widget._album.isShared) AlbumEditDialog(album: widget._album),
       ],
     );
