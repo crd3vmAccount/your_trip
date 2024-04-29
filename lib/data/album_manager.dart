@@ -22,34 +22,19 @@ class AlbumManager {
     return _instance;
   }
 
-  Future<Album> staticAlbumGet(String albumName) async {
-    return (await _getUserAlbumCollection()
-            .where("queryName", isEqualTo: albumName.toLowerCase())
-            .limit(1)
-            .get())
-        .docs
-        .map((d) => _queryToAlbum(d))
-        .single;
-  }
-
-  Stream<Album> liveAlbumGet(String albumName) {
-    return _getUserAlbumCollection()
-        .where("queryName", isEqualTo: albumName.toLowerCase())
-        .limit(1)
+  Stream<List<Album>> liveSharedAlbumList() {
+    return _getAlbumCollection()
+        .where("sharedWith",
+            arrayContains: FirebaseAuth.instance.currentUser!.email)
         .snapshots()
-        .expand((snapshot) => snapshot.docs)
-        .map((albumData) => _queryToAlbum(albumData));
-  }
-
-  Future<List<Album>> staticAlbumList() async {
-    return (await _getUserAlbumCollection().get())
-        .docs
-        .map((d) => _queryToAlbum(d))
-        .toList();
+        .map((snapshot) => snapshot.docs
+            .map((d) => _queryToAlbum(d, isShared: true))
+            .toList());
   }
 
   Stream<List<Album>> liveAlbumList() {
-    return _getUserAlbumCollection()
+    return _getAlbumCollection()
+        .where("creator", isEqualTo: uid())
         .snapshots()
         .map((snapshot) => snapshot.docs.map((d) => _queryToAlbum(d)).toList());
   }
@@ -63,24 +48,16 @@ class AlbumManager {
     return await FirebaseStorage.instance.ref(photo.photoUrl).getData();
   }
 
-  Future<List<Uint8List>> staticPhotoList(Album album) async {
-    return album.photos
-        .map((p) => photo2Bytes(p))
-        .where((element) => element != null)
-        .toList(growable: false)
-        .cast<Uint8List>();
-  }
-
   Future<void> deleteAlbum(Album album) async {
     album.photos.map((photo) => photo.photoUrl).forEach((photoUrl) {
       FirebaseStorage.instance.ref(photoUrl).delete();
     });
-    await _getUserAlbumCollection().doc(album.docId).delete();
+    await _getAlbumCollection().doc(album.docId).delete();
   }
 
   Future<bool> renameAlbum(Album album, String newName) async {
     if (await isNotDuplicate(newName)) {
-      await _getUserAlbumCollection().doc(album.docId).update({
+      await _getAlbumCollection().doc(album.docId).update({
         "displayName": newName,
         "queryName": newName.toLowerCase(),
       });
@@ -93,7 +70,8 @@ class AlbumManager {
   Future<bool> createAlbum(String albumName) async {
     if (await isNotDuplicate(albumName)) {
       var uniqueId = const Uuid().v8();
-      await _getUserAlbumCollection().doc(uniqueId).set({
+      await _getAlbumCollection().doc(uniqueId).set({
+        "creator": uid(),
         "displayName": albumName,
         "queryName": albumName.toLowerCase(),
         "sharedWith": [],
@@ -110,7 +88,7 @@ class AlbumManager {
   }
 
   Future<bool> isNotDuplicate(String albumName) async {
-    var matches = await _getUserAlbumCollection()
+    var matches = await _getAlbumCollection()
         .where("queryName", isEqualTo: albumName.toLowerCase())
         .limit(1)
         .get();
@@ -118,33 +96,33 @@ class AlbumManager {
   }
 
   Future<void> shareWith(Album album, String email) async {
-    _getUserAlbumCollection().doc(album.docId).update({
+    _getAlbumCollection().doc(album.docId).update({
       "sharedWith": FieldValue.arrayUnion([email])
     });
   }
 
   Future<void> unshareWith(Album album, String email) async {
-    _getUserAlbumCollection().doc(album.docId).update({
+    _getAlbumCollection().doc(album.docId).update({
       "sharedWith": FieldValue.arrayRemove([email])
     });
   }
 
   Stream<List<String>> liveSharedWith(Album album) {
-    return _getUserAlbumCollection()
+    return _getAlbumCollection()
         .doc(album.docId)
         .snapshots()
         .map((snapshot) => _retrieveStringList(snapshot.data()?["sharedWith"]));
   }
 
   Stream<List<Photo>> livePhotos(Album album) {
-    return _getUserAlbumCollection()
+    return _getAlbumCollection()
         .doc(album.docId)
         .snapshots()
         .map((snapshot) => _retrievePhotoList(snapshot.data()?["photos"]));
   }
 
   Stream<List<Future<Uint8List?>>> livePhotoBytes(Album album) {
-    return _getUserAlbumCollection()
+    return _getAlbumCollection()
         .doc(album.docId)
         .snapshots()
         .map((snapshot) => _retrievePhotoList(snapshot.data()?["photos"]))
@@ -169,7 +147,7 @@ class AlbumManager {
     var reference = FirebaseStorage.instance.ref(folder).child(file);
     var uploadTask = reference.putData(bytes);
     await uploadTask.whenComplete(() async => {
-          await _getUserAlbumCollection().doc(album.docId).update({
+          await _getAlbumCollection().doc(album.docId).update({
             "photos": FieldValue.arrayUnion([
               {
                 "photoUrl": "$folder/$file",
@@ -183,12 +161,16 @@ class AlbumManager {
         });
   }
 
-  Album _queryToAlbum(QueryDocumentSnapshot<Map<String, dynamic>> data) {
+  Album _queryToAlbum(
+    QueryDocumentSnapshot<Map<String, dynamic>> data, {
+    isShared = false,
+  }) {
     return Album(
       data.id,
       data["displayName"],
       sharedWith: _retrieveStringList(data["sharedWith"]),
       photos: _retrievePhotoList(data["photos"]),
+      isShared: isShared,
     );
   }
 
@@ -212,10 +194,7 @@ class AlbumManager {
     return (data as List<dynamic>).cast();
   }
 
-  CollectionReference<Map<String, dynamic>> _getUserAlbumCollection() {
-    return FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid())
-        .collection("albums");
+  CollectionReference<Map<String, dynamic>> _getAlbumCollection() {
+    return FirebaseFirestore.instance.collection("albums");
   }
 }
