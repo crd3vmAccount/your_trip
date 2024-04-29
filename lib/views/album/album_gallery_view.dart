@@ -62,7 +62,7 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
       appBar: AppBar(
         title: Text(widget._album.displayName),
         actions: [
-          if (_selectedPhoto != null)
+          if (_selectedPhoto != null && widget._album.isShared == false)
             IconButton(
               onPressed: () {
                 _showConfirmationDialog(context);
@@ -170,13 +170,15 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
                     );
                   },
                   onLongPress: () {
-                    setState(() {
-                      if (_selectedPhoto == snapshot.data!) {
-                        _selectedPhoto = null;
-                      } else {
-                        _selectedPhoto = snapshot.data!;
-                      }
-                    });
+                    if (!widget._album.isShared) {
+                      setState(() {
+                        if (_selectedPhoto == snapshot.data!) {
+                          _selectedPhoto = null;
+                        } else {
+                          _selectedPhoto = snapshot.data!;
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
