@@ -24,8 +24,11 @@ class AlbumManager {
 
   Stream<List<Album>> liveSharedAlbumList() {
     return _getAlbumCollection()
-        .where("sharedWith",
-            arrayContains: FirebaseAuth.instance.currentUser!.email)
+        .where(
+          "sharedWith",
+          arrayContains: FirebaseAuth.instance.currentUser!.email,
+        )
+        .orderBy("lastEdited", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((d) => _queryToAlbum(d, isShared: true))
@@ -35,6 +38,7 @@ class AlbumManager {
   Stream<List<Album>> liveAlbumList() {
     return _getAlbumCollection()
         .where("creator", isEqualTo: uid())
+        .orderBy("lastEdited", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((d) => _queryToAlbum(d)).toList());
   }
@@ -76,6 +80,7 @@ class AlbumManager {
         "queryName": albumName.toLowerCase(),
         "sharedWith": [],
         "photos": [],
+        "lastEdited": FieldValue.serverTimestamp(),
       });
       return true;
     } else {
@@ -156,7 +161,8 @@ class AlbumManager {
                   "longitude": coordinates.longitude,
                 },
               }
-            ])
+            ]),
+            "lastEdited": FieldValue.serverTimestamp(),
           })
         });
   }
