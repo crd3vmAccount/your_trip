@@ -61,10 +61,13 @@ class _AlbumCardState extends State<AlbumCard> {
 
   Widget _albumPreview() {
     return widget._album.photos.isEmpty
-        ? const Center(
-            child: Text(
-              "No Images",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+        ? const SizedBox(
+            height: 150,
+            child: Center(
+              child: Text(
+                "No Images",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              ),
             ),
           )
         : Center(
