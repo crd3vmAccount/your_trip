@@ -21,10 +21,12 @@ class AlbumMapView extends StatelessWidget {
       appBar: AppBar(
         title: Text(album.displayName),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: takePicture,
-        child: const Icon(Icons.camera_alt),
-      ),
+      floatingActionButton: album.isShared
+          ? Container()
+          : FloatingActionButton(
+              onPressed: takePicture,
+              child: const Icon(Icons.camera_alt),
+            ),
       body: AlbumMapWidget(album: album),
     );
   }

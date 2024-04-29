@@ -3,19 +3,41 @@ import 'package:your_trip/data/album_manager.dart';
 import 'package:your_trip/fragments/album_card.dart';
 import 'package:your_trip/fragments/album_create_dialog.dart';
 
-class AlbumListView extends StatelessWidget {
+class AlbumListView extends StatefulWidget {
   const AlbumListView({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return AlbumListState();
+  }
+}
+
+class AlbumListState extends State<AlbumListView> {
+  bool isShareView = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Albums"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                setState(() {
+                  isShareView = !isShareView;
+                });
+              },
+              child: isShareView
+                  ? const Text("Your Albums")
+                  : const Text("Shared Albums"))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
         child: StreamBuilder(
-          stream: AlbumManager.instance.liveAlbumList(),
+          stream: isShareView
+              ? AlbumManager.instance.liveSharedAlbumList()
+              : AlbumManager.instance.liveAlbumList(),
           builder: (streamContext, snapshot) {
             if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
@@ -47,7 +69,8 @@ class AlbumListView extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: const AlbumCreateDialog(),
+
+      floatingActionButton: isShareView ? Container() :  const AlbumCreateDialog(),
     );
   }
 }

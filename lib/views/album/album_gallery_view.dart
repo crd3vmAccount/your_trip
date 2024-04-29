@@ -31,10 +31,12 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: _buildGallery(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: takePicture,
-        child: const Icon(Icons.camera_alt),
-      ),
+      floatingActionButton: widget._album.isShared
+          ? Container()
+          : FloatingActionButton(
+              onPressed: takePicture,
+              child: const Icon(Icons.camera_alt),
+            ),
     );
   }
 

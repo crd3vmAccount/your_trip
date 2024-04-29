@@ -119,11 +119,11 @@ class _AlbumCardState extends State<AlbumCard> {
           onPressed: onGalleryClick,
           child: const Icon(Icons.auto_awesome_mosaic_rounded),
         ),
-        ElevatedButton(
+        if (!widget._album.isShared) ElevatedButton(
           onPressed: onShareClick,
           child: const Icon(Icons.share),
         ),
-        AlbumEditDialog(album: widget._album),
+        if (!widget._album.isShared) AlbumEditDialog(album: widget._album),
       ],
     );
   }
