@@ -28,7 +28,7 @@ class SignUpView extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text(
-          "Sign In",
+          "Sign Up",
         ),
       ),
       body: SingleChildScrollView(
@@ -36,7 +36,7 @@ class SignUpView extends StatelessWidget {
           children: [
             formCard(title: 'Sign Up', form: const SignUpForm()),
             cardPrompt(
-              title: "Don't have an account?",
+              title: "Already have an account?",
               buttonText: 'Sign In',
               onPressed: () {
                 navigateToSignInView(context);

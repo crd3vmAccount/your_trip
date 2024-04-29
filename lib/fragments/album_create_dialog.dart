@@ -19,21 +19,23 @@ class _AlbumCreateState extends State<AlbumCreateDialog> {
     showDialog(
       context: context,
       builder: (context) {
-        return Form(
-          key: _formKey,
-          child: AlertDialog(
-            title: const Text("Create New Item"),
-            content: _albumNameField(),
-            actions: [
-              ElevatedButton(
-                onPressed: _closeForm,
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text("Submit"),
-              ),
-            ],
+        return SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: AlertDialog(
+              title: const Text("Create New Item"),
+              content: _albumNameField(),
+              actions: [
+                ElevatedButton(
+                  onPressed: _closeForm,
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text("Submit"),
+                ),
+              ],
+            ),
           ),
         );
       },

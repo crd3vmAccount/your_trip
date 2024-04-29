@@ -29,7 +29,7 @@ class AlbumListState extends State<AlbumListView> {
               },
               child: isShareView
                   ? const Text("Your Albums")
-                  : const Text("Shared Albums"))
+                  : const Text("Friends' Albums"))
         ],
       ),
       body: Padding(

@@ -44,7 +44,7 @@ class _AlbumEditState extends State<AlbumEditDialog> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();  // close both dialogs
+                Navigator.of(context).pop(); // close both dialogs
                 AlbumManager.instance.deleteAlbum(widget.album);
               },
               child: const Text('Yes'),
@@ -59,30 +59,32 @@ class _AlbumEditState extends State<AlbumEditDialog> {
     showDialog(
       context: context,
       builder: (context) {
-        return Form(
-          key: _formKey,
-          child: AlertDialog(
-            title: Text("Edit: ${widget.album.displayName}"),
-            content: _albumNameField(),
-            actions: [
-              ElevatedButton(
-                onPressed: () async {
-                  _showConfirmationDialog(context);
-                },
-                child: const Icon(
-                  color: Colors.red,
-                  Icons.delete,
+        return SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: AlertDialog(
+              title: Text("Edit: ${widget.album.displayName}"),
+              content: _albumNameField(),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    _showConfirmationDialog(context);
+                  },
+                  child: const Icon(
+                    color: Colors.red,
+                    Icons.delete,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: _closeForm,
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text("Save"),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: _closeForm,
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text("Save"),
+                ),
+              ],
+            ),
           ),
         );
       },
