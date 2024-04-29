@@ -59,6 +59,22 @@ class AlbumManager {
     await _getAlbumCollection().doc(album.docId).delete();
   }
 
+  Future<void> deletePhoto(Album album, Photo photo) async {
+    FirebaseStorage.instance.ref(photo.photoUrl).delete();
+    _getAlbumCollection().doc(album.docId).update({
+      "photos": FieldValue.arrayRemove([
+        {
+          "location": {
+            "latitude": photo.location.latitude,
+            "longitude": photo.location.longitude,
+          },
+          "photoUrl": photo.photoUrl,
+        }
+      ]),
+      "lastEdited": FieldValue.serverTimestamp(),
+    });
+  }
+
   Future<bool> renameAlbum(Album album, String newName) async {
     if (await isNotDuplicate(newName)) {
       await _getAlbumCollection().doc(album.docId).update({
@@ -126,15 +142,16 @@ class AlbumManager {
         .map((snapshot) => _retrievePhotoList(snapshot.data()?["photos"]));
   }
 
-  Stream<List<Future<Uint8List?>>> livePhotoBytes(Album album) {
+  Stream<List<Future<Photo>>> livePhotoWithBytes(Album album) {
     return _getAlbumCollection()
         .doc(album.docId)
         .snapshots()
         .map((snapshot) => _retrievePhotoList(snapshot.data()?["photos"]))
-        .map((photoList) => photoList.map((photo) => photo.photoUrl))
-        .map((urls) => urls
-            .map((e) => FirebaseStorage.instance.ref(e).getData())
-            .toList());
+        .map((photos) => photos.map((photo) async {
+              photo.bytes =
+                  await FirebaseStorage.instance.ref(photo.photoUrl).getData();
+              return photo;
+            }).toList());
   }
 
   String uid() {
