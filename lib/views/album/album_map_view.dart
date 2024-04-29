@@ -176,7 +176,10 @@ class _PhotoMarker extends StatelessWidget {
               } else {
                 return snapshot.data == null
                     ? const Text("Error: Could not retrieve image.")
-                    : Image.memory(snapshot.data!);
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Image.memory(snapshot.data!),
+                      );
               }
             },
           ),

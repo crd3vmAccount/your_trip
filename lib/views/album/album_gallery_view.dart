@@ -122,9 +122,12 @@ class _AlbumGalleryState extends State<AlbumGalleryView> {
                       ),
                     );
                   },
-                  child: Image.memory(
-                    snapshot.data!,
-                    fit: BoxFit.fill,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: Image.memory(
+                      snapshot.data!,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 );
         }
